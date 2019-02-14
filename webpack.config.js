@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
 
 //add clean webpack
 module.exports = {
@@ -10,7 +11,9 @@ module.exports = {
     path: path.resolve(__dirname,'public')
   },
   devServer: {
-    contentBase: './public'
+    contentBase: './public',
+    hot: true,
+    port:9000
   },
 
   plugins: [
@@ -19,7 +22,7 @@ module.exports = {
       filename: 'index.html',
       template: './src/template.html'
     }),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
   ],
   module:{
     rules: [

@@ -12,13 +12,20 @@ import animationThree from './Frame3.json'
 
 const Root = styled.div`
 `
+const Play = styled.button`
+position:absolute;
+top:0;
+left:0;
+z-index:1;
+`
 
-const container = styled.div`
-  position:relative;
-  top:0;
-  right:0;
-  height:500px;
-  width:700px
+const Container = styled.div`
+  display:block;
+
+  height:250px;
+  width:280px;
+  border: solid 1px red;
+
 `
 
 class App extends React.Component {
@@ -26,22 +33,24 @@ class App extends React.Component {
     super()
     this.state = {
       currentAnimation: animationOne ,
-      animations: [animationOne, animationTwo, animationThree],
-      twoplaying:false,
+      position: 100,
+      queue:[],
+      animations: [ {file:  animationThree,id:102},{file:animationTwo,id:101}, {file:animationOne,id:100}],
+      twoplaying:true,
 
     }
-
   this.onComplete = this.onComplete.bind(this);
   this.playNext = this.playNext.bind(this);
+  this.onClick = this.onClick.bind(this)
+  this.finished = this.finished.bind(this)
+  this.playCheck = this.playCheck.bind(this)
 
   }
-
-
 
   lottieOptions(animation,play){
     return {
       loop: false,
-      autoplay: true,
+      autoplay: play,
       animationData: animation,
       rendererSettings: {
         preserveAspectRatio: 'xMidYMid slice'
@@ -49,7 +58,6 @@ class App extends React.Component {
     }
 
   }
-
 
   onComplete () {
     console.log('animation complete')
@@ -63,8 +71,25 @@ class App extends React.Component {
     )
   }
 
+  playCheck(id){
+    return id === this.state.position
+  }
+
   componentDidUpdate(){
     console.log('component updated');
+  }
+
+  onClick(){
+    this.setState({
+      twoplaying: false
+    })
+  }
+
+  finished(){
+    this.setState({
+      position: this.state.position - 1,
+      animations:this.state.animations.slice(0,this.state.animations.length -1)
+    })
   }
 
   playNext(){
@@ -78,31 +103,25 @@ class App extends React.Component {
 
 
     return <Root>
-
-       <Lottie options={this.lottieOptions(this.state.currentAnimation, true)}
-        height={500}
-        width={700}
-        eventListeners = {[
-          {
-            eventName:'complete',
-            callback: this.onComplete
-          }
-        ]}
-      />
-
-      {/* <Lottie options={this.lottieOptions(this.state.animations[1],false)}
-        height={500}
-        width={700}
-        isstopped={this.state.twoplaying}
-        eventListeners = {[
-          {
-            eventName:'complete',
-            callback: function(){
-              console.log('complete');
-            }
-          }
-        ]}
-      /> */}
+              <Play onClick={this.onClick}>play</Play>
+              {this.state.animations.map(item => {
+                return (
+                  <Container key={item.key}>
+                    <Lottie
+                      options={this.lottieOptions(item.file,this.playCheck(item.id))}
+                      height={250}
+                      width={270}
+                      isStopped={this.playCheck(item.id)}
+                      eventListeners = {[
+                        {
+                          eventName:'complete',
+                          callback: this.finished
+                        }
+                      ]}
+                    />
+                  </Container>
+                )
+              })}
 
       </Root>
 

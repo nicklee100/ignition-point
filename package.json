@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "webpack-dev-server --open"
-  },
+    "start": "webpack-dev-server --env development"
+    },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -29,6 +29,7 @@
     "less-loader": "^4.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.3",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.1.14"
   }
 }
