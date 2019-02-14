@@ -10,6 +10,8 @@ import animationOne from './Frame1.json'
 import animationTwo from './Frame2.json'
 import animationThree from './Frame3.json'
 
+import Animation from './animation.js'
+
 const Root = styled.div`
 `
 const Play = styled.button`
@@ -20,12 +22,9 @@ z-index:1;
 `
 
 const Container = styled.div`
-  display:block;
-
-  height:250px;
-  width:280px;
-  border: solid 1px red;
-
+  position:absolute;
+  top:0;
+  left:0;
 `
 
 class App extends React.Component {
@@ -87,31 +86,28 @@ class App extends React.Component {
 
   finished(){
     this.setState({
-      position: this.state.position - 1,
+      position: this.state.position + 1,
       animations:this.state.animations.slice(0,this.state.animations.length -1)
     })
   }
 
   playNext(){
-    this.setState({
-      twoplaying:true
-    })
+
   }
 
   render(){
-
-
+    console.log(this.state);
 
     return <Root>
-              <Play onClick={this.onClick}>play</Play>
               {this.state.animations.map(item => {
                 return (
                   <Container key={item.key}>
+
                     <Lottie
                       options={this.lottieOptions(item.file,this.playCheck(item.id))}
-                      height={250}
-                      width={270}
-                      isStopped={this.playCheck(item.id)}
+                      height={550}
+                      width={770}
+                      isStopped={!this.playCheck(item.id)}
                       eventListeners = {[
                         {
                           eventName:'complete',
