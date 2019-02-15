@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import ReactBodymovin from 'react-bodymovin'
-//import ReactBodymovin from 'react-bodymovin/lib/ReactBodymovinFull'
 import Lottie from 'react-lottie';
 import { CSSTransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
@@ -14,48 +12,33 @@ import Animation from './animation.js'
 
 const Root = styled.div`
 `
-const Play = styled.button`
-position:absolute;
-top:0;
-left:0;
-z-index:1;
-`
-
 const Container = styled.div`
   position:absolute;
   top:0;
   left:0;
   z-index:-1;
 `
-
 const Button = styled.button`
   border: solid 1px black;
   padding:1em;
 
 `
-
 class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      currentAnimation: animationOne ,
+      currentAnimation: animationOne,
       position: 100,
       playedQueue:[],
       animations: [  {file:  animationThree,id:102},{file:animationTwo,id:101},{file:animationOne,id:100}],
-      twoplaying:true,
       isPaused: false,
-
     }
-  this.onComplete = this.onComplete.bind(this);
-  this.play = this.play.bind(this);
+
   this.next = this.next.bind(this);
   this.pause = this.pause.bind(this);
   this.previous = this.previous.bind(this);
-
-  this.onClick = this.onClick.bind(this)
   this.finished = this.finished.bind(this)
   this.playCheck = this.playCheck.bind(this)
-
   }
 
   lottieOptions(animation,play){
@@ -67,19 +50,6 @@ class App extends React.Component {
         preserveAspectRatio: 'xMidYMid slice'
       }
     }
-
-  }
-
-  onComplete () {
-    console.log('animation complete')
-    let index = this.state.animations.indexOf(this.state.currentAnimation);
-    console.log('index', index++);
-    const next =  this.state.animations[index]
-    this.setState(
-      {
-        currentAnimation: this.state.animations[index]
-      }
-    )
   }
 
   playCheck(id){
@@ -87,17 +57,11 @@ class App extends React.Component {
   }
 
   componentDidUpdate(){
-    console.log('component updated');
-  }
-
-  onClick(){
-    this.setState({
-      twoplaying: false
-    })
+    console.log('component did updated');
   }
 
   finished(){
-    var newStateArray = this.state.playedQueue.slice();
+    const newStateArray = this.state.playedQueue.slice();
     newStateArray.push(this.state.animations[this.state.animations.length -1])
     this.setState({
       position: this.state.position + 1,
@@ -107,35 +71,30 @@ class App extends React.Component {
   }
 
   next(){
-    console.log('next');
+    this.finished()
   }
 
   pause(){
-    console.log('pause');
     this.setState({
       isPaused:!this.state.isPaused
     })
   }
 
-  play(){
-
-  }
-
   previous(){
-    console.log('previous');
+    const playQueue = this.state.playedQueue.slice(0,this.state.playedQueue.length - 1)
+    this.setState({
+      playedQueue: playQueue,
+      animations: this.state.animations.concat(this.state.playedQueue[this.state.playedQueue.length-1]),
+      position: this.state.position - 1,
+    })
   }
-
-
 
   render(){
-    console.log(this.state);
 
     return <Root>
               {this.state.animations.map(item => {
-                console.log('item:',item);
                 return (
                   <Container key={item.id}>
-
                     <Lottie
                       options={this.lottieOptions(item.file,this.playCheck(item.id))}
                       height={550}
@@ -153,11 +112,9 @@ class App extends React.Component {
                 )
               })}
             <Button onClick={this.pause}>{this.state.isPaused ? 'play' : 'pause' }</Button>
-            <Button onClick={this.play}>Play</Button>
             <Button onClick={this.previous}>Previous</Button>
             <Button onClick={this.next}>Next</Button>
       </Root>
-
   }
 }
 
@@ -165,6 +122,3 @@ ReactDOM.render(
   <App/>,
   document.getElementById('root')
 );
-
-
-
