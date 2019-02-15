@@ -25,6 +25,13 @@ const Container = styled.div`
   position:absolute;
   top:0;
   left:0;
+  z-index:-1;
+`
+
+const Button = styled.button`
+  border: solid 1px black;
+  padding:1em;
+
 `
 
 class App extends React.Component {
@@ -33,13 +40,18 @@ class App extends React.Component {
     this.state = {
       currentAnimation: animationOne ,
       position: 100,
-      queue:[],
-      animations: [ {file:  animationThree,id:102},{file:animationTwo,id:101}, {file:animationOne,id:100}],
+      playedQueue:[],
+      animations: [  {file:  animationThree,id:102},{file:animationTwo,id:101},{file:animationOne,id:100}],
       twoplaying:true,
+      isPaused: false,
 
     }
   this.onComplete = this.onComplete.bind(this);
-  this.playNext = this.playNext.bind(this);
+  this.play = this.play.bind(this);
+  this.next = this.next.bind(this);
+  this.pause = this.pause.bind(this);
+  this.previous = this.previous.bind(this);
+
   this.onClick = this.onClick.bind(this)
   this.finished = this.finished.bind(this)
   this.playCheck = this.playCheck.bind(this)
@@ -85,29 +97,51 @@ class App extends React.Component {
   }
 
   finished(){
+    var newStateArray = this.state.playedQueue.slice();
+    newStateArray.push(this.state.animations[this.state.animations.length -1])
     this.setState({
       position: this.state.position + 1,
-      animations:this.state.animations.slice(0,this.state.animations.length -1)
+      animations:this.state.animations.slice(0,this.state.animations.length-1),
+      playedQueue: newStateArray
     })
   }
 
-  playNext(){
+  next(){
+    console.log('next');
+  }
+
+  pause(){
+    console.log('pause');
+    this.setState({
+      isPaused:!this.state.isPaused
+    })
+  }
+
+  play(){
 
   }
+
+  previous(){
+    console.log('previous');
+  }
+
+
 
   render(){
     console.log(this.state);
 
     return <Root>
               {this.state.animations.map(item => {
+                console.log('item:',item);
                 return (
-                  <Container key={item.key}>
+                  <Container key={item.id}>
 
                     <Lottie
                       options={this.lottieOptions(item.file,this.playCheck(item.id))}
                       height={550}
                       width={770}
                       isStopped={!this.playCheck(item.id)}
+                      isPaused={this.state.isPaused}
                       eventListeners = {[
                         {
                           eventName:'complete',
@@ -118,7 +152,10 @@ class App extends React.Component {
                   </Container>
                 )
               })}
-
+            <Button onClick={this.pause}>{this.state.isPaused ? 'play' : 'pause' }</Button>
+            <Button onClick={this.play}>Play</Button>
+            <Button onClick={this.previous}>Previous</Button>
+            <Button onClick={this.next}>Next</Button>
       </Root>
 
   }
